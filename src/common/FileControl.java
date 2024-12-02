@@ -9,24 +9,27 @@ import java.util.ArrayList;
 
 public class FileControl implements iFileControl {
 
-    private final String FILE_PATH = "src/resources/expenses.txt";
+    private String FILE_PATH = "src/resources/expenses.txt";
     private File file;
     private Path path = null;
+   
 
     //    Initialize records list
-    public FileControl() {
+    public FileControl(String filePath) {
+        this.FILE_PATH = filePath;
+        initializeFile();
+    }
+
+    private void initializeFile() {
         try {
             path = Path.of(FILE_PATH);
             file = path.toFile();
             if (!file.exists()) {
                 file.createNewFile();
             }
-        } catch (InvalidPathException e) {
-            throw new RuntimeException("Path error: " + e.getMessage());
-        } catch (IOException e) {
-            throw new RuntimeException("Error creating file: " + e.getMessage());
+        } catch (InvalidPathException | IOException e) {
+            throw new RuntimeException("Error initializing file: " + e.getMessage(), e);
         }
-
     }
 
     @Override
@@ -51,17 +54,17 @@ public class FileControl implements iFileControl {
 
     @Override
     public void read(ArrayList<Record> records) {
-        // Load existing records
+        if (file.length() == 0) {
+            return; // File is empty, no records to read
+        }
         try (FileInputStream fis = new FileInputStream(file);
              ObjectInputStream inputStream = new ObjectInputStream(fis)) {
-            while (inputStream.available() > 0) {
-                records.add((Record) inputStream.readObject());
-            }
+            // Deserialize the entire list of records
+            records.addAll((ArrayList<Record>) inputStream.readObject());
         } catch (EOFException e) {
-            // Reached the end of the file; no more objects to read
+            // Reached end of file, normal behavior for empty or incomplete streams
         } catch (IOException | ClassNotFoundException e) {
-            throw new RuntimeException("Error reading records: " + e.getMessage());
+            throw new RuntimeException("Error reading records: " + e.getMessage(), e);
         }
-
     }
 }
