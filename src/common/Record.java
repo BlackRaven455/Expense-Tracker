@@ -5,22 +5,22 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 
-public class Record implements Serializable{
+public class Record implements Serializable {
 
-    private static int idCounter = 1;
+    //    private static int idCounter = 1;
     private int id;
     private String description;
     private double amount;
     private LocalDateTime date;
 
-    public Record( String description, double amount) {
+    public Record(String description, double amount, int id) {
         if (description == null || description.isEmpty()) {
             throw new IllegalArgumentException("Description cannot be null or empty.");
         }
         if (amount <= 0) {
             throw new IllegalArgumentException("Amount must be greater than zero.");
         }
-        this.id = idCounter++;
+        this.id = id;
         this.description = description;
         this.amount = amount;
         this.date = LocalDateTime.now();
@@ -36,7 +36,6 @@ public class Record implements Serializable{
         }
         this.date = LocalDateTime.parse(date);
     }
-
 
 
     public String getDescription() {
@@ -62,6 +61,7 @@ public class Record implements Serializable{
         }
         this.amount = amount;
     }
+
     @Override
     public String toString() {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
@@ -69,6 +69,9 @@ public class Record implements Serializable{
                 ", Description: " + description + ", Amount: $" + amount;
     }
 
+    public void setId(int id){
+        this.id = id;
+    }
     public int getId() {
         return this.id;
     }

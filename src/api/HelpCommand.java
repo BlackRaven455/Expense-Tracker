@@ -10,9 +10,9 @@ public class HelpCommand  implements iCommand{
         System.out.println("Usage: expense-tracker <command> [options]");
         System.out.println("Commands:");
         System.out.println("  add --description \"description\" --amount amount");
-        System.out.println("  delete --id id");
+        System.out.println("  delete  id");
         System.out.println("  list");
-        System.out.println("  summary [--month month]");
+        System.out.println("  summary [month]");
         System.out.println("  help");
     }
 }

@@ -1,25 +1,26 @@
 package core;
 
-import api.AddCommand;
-import api.Commands;
-import api.HelpCommand;
-import api.iCommand;
+import api.*;
 import common.Record;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-
 import java.util.Map;
 
 public class CommandRegistry {
     private final Map<String, iCommand> commands = new HashMap<>();
 
     public CommandRegistry() {
-        commands.put(Commands.ADD.getCommandName(), new AddCommand());
-//        commands.put("delete", new DeleteCommand());
-//        commands.put("list", new ListCommand());
-//        commands.put("summary", new SummaryCommand());
-        commands.put("help", new HelpCommand());
+        for (Commands cmd : Commands.values()) {
+            switch (cmd) {
+                case ADD -> commands.put(cmd.getCommandName(), new AddCommand());
+                case DELETE -> commands.put(cmd.getCommandName(), new DeleteCommand());
+                case LIST -> commands.put(cmd.getCommandName(), new ListCommand());
+                case SUMMARY -> commands.put(cmd.getCommandName(), new SummaryCommand());
+                case HELP -> commands.put(cmd.getCommandName(), new HelpCommand());
+//                case EDIT -> commands.put(cmd.getCommandName(), new EditCommand());
+            }
+        }
     }
 
     public void executeCommand(String commandName, String[] args, ArrayList<Record> records) {

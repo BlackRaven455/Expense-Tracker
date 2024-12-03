@@ -9,12 +9,16 @@ import java.util.ArrayList;
 
 public class FileControl implements iFileControl {
 
-    private String FILE_PATH = "src/resources/expenses.txt";
+    private String FILE_PATH = System.getProperty("user.dir") + "/resources/expenses.txt";
     private File file;
     private Path path = null;
-   
+
 
     //    Initialize records list
+    public FileControl() {
+        initializeFile();
+    }
+
     public FileControl(String filePath) {
         this.FILE_PATH = filePath;
         initializeFile();
@@ -24,16 +28,42 @@ public class FileControl implements iFileControl {
         try {
             path = Path.of(FILE_PATH);
             file = path.toFile();
+
+            System.out.println("Checking file at path: " + file.getAbsolutePath());
+
+            File parentDir = file.getParentFile();
+            if (parentDir != null && file.exists()) {
+                System.out.println("File exists: " + file.getAbsolutePath());
+                return;
+            } else if (parentDir != null) {
+                System.out.println("Parent directory: " + parentDir.getAbsolutePath());
+                if (!parentDir.exists()) {
+                    if (parentDir.mkdirs()) {
+                        System.out.println("Parent directory created successfully.");
+                    } else {
+                        throw new RuntimeException("Failed to create parent directory.");
+                    }
+                } else {
+                    System.out.println("Parent directory already exists.");
+                }
+            }
             if (!file.exists()) {
-                file.createNewFile();
+                if (file.createNewFile()) {
+                    System.out.println("File created successfully.");
+                } else {
+                    throw new RuntimeException("Failed to create file.");
+                }
+            } else {
+                System.out.println("File already exists.");
             }
         } catch (InvalidPathException | IOException e) {
             throw new RuntimeException("Error initializing file: " + e.getMessage(), e);
         }
     }
 
+
     @Override
-    public void write(ArrayList<Record> records)  {
+    public void write(ArrayList<Record> records) {
         try {
             //Saving of object in a file
             FileOutputStream file = new FileOutputStream(this.file);
